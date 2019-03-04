@@ -57,4 +57,4 @@
 (let/cc dismount
   (begin [set! fib-cps-k (make-id-k dismount)]
          [set! fib-cps-n 5]
-         (fib-cps)))
+         (trampoline (fib-cps))))
