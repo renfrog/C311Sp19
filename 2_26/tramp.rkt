@@ -24,7 +24,7 @@
        (begin [set! fib-cps-k (make-fib-sub2-k apply-k-v k)]
               [set! fib-cps-n (sub1 (sub1 n))]
               (fib-cps))]
-      [`(id-k) apply-k-v])))
+      [`(id-k ,dismount) (dismount apply-k-v)])))
 
 (define make-fib-sub2-k
   (λ (v^ k)
@@ -35,8 +35,8 @@
     `(fib-sub1-k ,n ,k)))
 
 (define make-id-k
-  (λ () 
-    `(id-k)))
+  (λ (dismount) 
+    `(id-k ,dismount)))
 
 (define fib-cps
   (λ () #|fib-cps-n fib-cps-k|#
@@ -54,6 +54,7 @@
               [set! fib-cps-n (sub1 fib-cps-n)]
               (fib-cps))])))
 
-(begin [set! fib-cps-k (make-id-k)]
-       [set! fib-cps-n 5]
-       (fib-cps))
+(let/cc dismount
+  (begin [set! fib-cps-k (make-id-k dismount)]
+         [set! fib-cps-n 5]
+         (fib-cps)))
